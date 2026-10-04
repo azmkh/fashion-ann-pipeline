@@ -1,0 +1,8 @@
+venv/
+.venv/
+__pycache__/
+*.pyc
+.dvc/cache/
+*.h5
+credentials.json
+.token/
