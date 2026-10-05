@@ -1,0 +1,84 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python src/prepare.py
+    deps:
+    - path: src/prepare.py
+      hash: md5
+      md5: a9101c22f6880798eff9b88f027dd5a9
+      size: 663
+    outs:
+    - path: data/raw
+      hash: md5
+      md5: 23b0000338669d2c61217dbd94633aa0.dir
+      size: 54950512
+      nfiles: 4
+  preprocess:
+    cmd: python src/preprocess.py
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: 23b0000338669d2c61217dbd94633aa0.dir
+      size: 54950512
+      nfiles: 4
+    - path: src/preprocess.py
+      hash: md5
+      md5: 7caeebd3ffc8930d5fe3a70e70141d1f
+      size: 1458
+    params:
+      params.yaml:
+        preprocess.seed: 42
+        preprocess.test_size: 0.1
+    outs:
+    - path: data/processed
+      hash: md5
+      md5: 12be1216b23b003beee7cc6125a0222b.dir
+      size: 219590768
+      nfiles: 6
+  train:
+    cmd: python src/train.py
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: 12be1216b23b003beee7cc6125a0222b.dir
+      size: 219590768
+      nfiles: 6
+    - path: src/train.py
+      hash: md5
+      md5: 4b14ab0a0b95f68a0e5849ccb62b729e
+      size: 1464
+    params:
+      params.yaml:
+        train.batch_size: 64
+        train.dense_units: 128
+        train.dropout_rate: 0.3
+        train.epochs: 10
+        train.learning_rate: 0.001
+    outs:
+    - path: models
+      hash: md5
+      md5: 4e9f4249480dd5837229c6a4e6d83f6f.dir
+      size: 1246086
+      nfiles: 2
+  evaluate:
+    cmd: python src/evaluate.py
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: 12be1216b23b003beee7cc6125a0222b.dir
+      size: 219590768
+      nfiles: 6
+    - path: models
+      hash: md5
+      md5: 4e9f4249480dd5837229c6a4e6d83f6f.dir
+      size: 1246086
+      nfiles: 2
+    - path: src/evaluate.py
+      hash: md5
+      md5: 5f667dc0e2f3e0fa9dcf3660f57bc134
+      size: 1629
+    outs:
+    - path: metrics.json
+      hash: md5
+      md5: d75d20b9e7556a78917df466678dc0b4
+      size: 2002
